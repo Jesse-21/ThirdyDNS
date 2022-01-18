@@ -1,20 +1,27 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+const namehash = require("eth-ens-namehash");
 
 module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  const result = await deploy("Greeter", {
+  const registry = await deploy("ENSRegistry", {
     from: deployer,
-    args: ["Hello world!"],
     log: true,
     waitConfirmations: 5,
   });
 
-  /*   await deploy("AnotherContract", {
+  await deploy("FIFSRegistrar", {
     from: deployer,
-    args: [],
+    args: [registry.address, namehash.hash("world")],
     log: true,
     waitConfirmations: 5,
-  }); */
+  });
+
+  await deploy("Resolver", {
+    from: deployer,
+    args: [registry.address],
+    log: true,
+    waitConfirmations: 5,
+  });
 };
-module.exports.tags = ["Greeter"];
+module.exports.tags = ["ENS"];
