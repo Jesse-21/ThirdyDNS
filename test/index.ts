@@ -7,6 +7,8 @@ const namehash = require("eth-ens-namehash");
 
 const labelhash = (label: string) => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(label));
 
+const rootNode = namehash.hash("awesome");
+
 let ensRegistry: ENSRegistry;
 let registrar: FIFSRegistrar;
 let resolver: Resolver;
@@ -18,10 +20,6 @@ let accounts: SignerWithAddress[];
 describe("ENS", function () {
   beforeEach(async function () {
     [deployer, account1, ...accounts] = await ethers.getSigners();
-    console.log("deployer ", deployer.address);
-    console.log("account1 ", account1.address);
-
-    const rootNode = namehash.hash("world");
 
     const ENSRegistry = await ethers.getContractFactory("ENSRegistry");
     ensRegistry = (await ENSRegistry.deploy()) as ENSRegistry;
@@ -36,17 +34,58 @@ describe("ENS", function () {
     await resolver.deployed();
   });
 
-  it("Register a new name", async function () {
-    const label = labelhash("world");
+  it("can register a new name, and set a resolver", async function () {
+    const newENSName = "sercan";
+    await registerNewName(newENSName, deployer, account1.address);
+    const registeredName = namehash.hash(`${newENSName}.awesome`);
 
-    const tx = await registrar.connect(deployer).register(label, account1.address);
+    let tx = await ensRegistry.connect(account1).setResolver(registeredName, resolver.address);
     await tx.wait();
 
-    ensRegistry.on("NewOwner", (args) => {
-      console.log(args);
-    });
+    expect(await ensRegistry.owner(registeredName)).equal(account1.address);
+    expect(await ensRegistry.resolver(registeredName)).equal(resolver.address);
+  });
 
-    //expect(await ensRegistry.owner("0x0")).equal(deployer.address);
-    expect(await ensRegistry.owner(namehash.hash("world"))).equal(account1.address);
+  it("can add subdomain", async function () {
+    const newENSName = "sercan";
+
+    const label = labelhash("yektas");
+    const expectedHash = namehash.hash("yektas.sercan.awesome");
+    const subRoot = namehash.hash("sercan.awesome");
+
+    //Create sercan.world
+    await registerNewName(newENSName, deployer, account1.address);
+
+    //Create yektas.sercan.world
+    let tx = await ensRegistry
+      .connect(account1)
+      .setSubnodeRecord(subRoot, label, account1.address, resolver.address, 5);
+    await tx.wait();
+
+    expect(await ensRegistry.owner(expectedHash)).equal(account1.address);
+    expect(await ensRegistry.resolver(expectedHash)).equal(resolver.address);
+    expect((await ensRegistry.ttl(expectedHash)).toNumber()).equal(5);
+    expect(await ensRegistry.recordExists(expectedHash)).equal(true);
+    expect(await ensRegistry.recordExists(namehash.hash("wrong.awesome"))).equal(false);
+  });
+
+  it("can register a name, set a resolver and, assign the account address", async function () {
+    const newENSName = "sercan";
+    await registerNewName(newENSName, deployer, account1.address);
+    const registeredName = namehash.hash(`${newENSName}.awesome`);
+
+    let tx = await ensRegistry.connect(account1).setResolver(registeredName, resolver.address);
+    await tx.wait();
+
+    tx = await resolver.connect(account1).setAddr(registeredName, account1.address);
+    await tx.wait();
+
+    expect(await resolver.addr(registeredName)).equal(account1.address);
   });
 });
+
+async function registerNewName(name: string, signer: SignerWithAddress, account: string) {
+  const label = labelhash(name);
+  let tx = await registrar.connect(signer).register(label, account);
+  await tx.wait();
+}

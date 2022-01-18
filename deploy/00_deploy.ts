@@ -12,7 +12,7 @@ module.exports = async ({ getNamedAccounts, deployments }: HardhatRuntimeEnviron
 
   await deploy("FIFSRegistrar", {
     from: deployer,
-    args: [registry.address, namehash.hash("world")],
+    args: [registry.address, namehash.hash("awesome")],
     log: true,
     waitConfirmations: 5,
   });

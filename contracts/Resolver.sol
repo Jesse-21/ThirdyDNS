@@ -24,7 +24,6 @@ contract Resolver is IResolver {
         onlyOwner(node)
     {
         addresses[node] = _addr;
-        console.log(addresses[node]);
         emit AddrChanged(node, _addr);
     }
 

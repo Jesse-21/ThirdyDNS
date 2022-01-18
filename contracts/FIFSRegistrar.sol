@@ -6,12 +6,10 @@ import "./ENS.sol";
 
 contract FIFSRegistrar {
     ENS private ens;
-    bytes32 private rootNode;
+    bytes32 rootNode;
 
     uint256 constant defaultExpireTime = 4 weeks;
     mapping(bytes32 => uint256) public expiryTimes;
-
-    event Mama();
 
     /**
      * Constructor.

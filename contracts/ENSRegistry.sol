@@ -12,12 +12,12 @@ contract ENSRegistry is ENS {
         uint64 ttl;
     }
 
-    mapping(bytes32 => Record) records;
+    mapping(bytes32 => Record) public records;
 
-    address registrar;
+    address admin;
 
     constructor() {
-        registrar = msg.sender;
+        admin = msg.sender;
     }
 
     function setRecord(
@@ -38,6 +38,7 @@ contract ENSRegistry is ENS {
     ) external override {
         bytes32 subNode = keccak256(abi.encodePacked(node, label));
         records[subNode] = Record(_owner, _resolver, _ttl);
+        emit NewOwner(subNode, label, _owner);
     }
 
     function setSubnodeOwner(
@@ -109,10 +110,7 @@ contract ENSRegistry is ENS {
     }
 
     modifier onlyRegistrar() {
-        require(
-            registrar == msg.sender,
-            "Only registrar can create new record"
-        );
+        require(admin == msg.sender, "Only admin can create new record");
         _;
     }
 }
