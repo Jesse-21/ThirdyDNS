@@ -10,7 +10,7 @@
     "generate-types": "npx hardhat typechain",
     "postinstall": "yarn generate-types",
     "typecheck": "tsc --noEmit",
-    "deploy": "npx hardhat run scripts/deploy.ts"
+    "deploy": "npx hardhat deploy"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
