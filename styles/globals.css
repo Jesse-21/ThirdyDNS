@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: "Outfit", sans-serif;
+}
+@font-face {
+  font-family: "Outfit";
+  src: url("/fonts/Outfit-Regular.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
