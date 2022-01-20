@@ -11,7 +11,7 @@ let domainPattern = new RegExp(
 const Home: NextPage = () => {
   return (
     <>
-      <img src="/ab.png" className="absolute w-full h-full -z-20" />
+      <img src="/bg.png" className="absolute w-full h-full -z-20" />
       <div className="flex flex-col items-center justify-start h-screen pt-64 space-y-10 text-white ">
         <h1 className="text-6xl text-center">
           Your next <span className="text-[#ff7500]">.awesome</span> domain is here. <br /> Claim
