@@ -9,36 +9,12 @@ contract ENSRegistry is ENS {
     struct Record {
         address owner;
         address resolver;
-        uint64 ttl;
     }
 
-    mapping(bytes32 => Record) public records;
-
-    address admin;
+    mapping(bytes32 => Record) records;
 
     constructor() {
-        admin = msg.sender;
-    }
-
-    function setRecord(
-        bytes32 node,
-        address _owner,
-        address _resolver,
-        uint64 _ttl
-    ) external override onlyRegistrar {
-        records[node] = Record(_owner, _resolver, _ttl);
-    }
-
-    function setSubnodeRecord(
-        bytes32 node,
-        bytes32 label,
-        address _owner,
-        address _resolver,
-        uint64 _ttl
-    ) external override {
-        bytes32 subNode = keccak256(abi.encodePacked(node, label));
-        records[subNode] = Record(_owner, _resolver, _ttl);
-        emit NewOwner(subNode, label, _owner);
+        records[0x0].owner = msg.sender;
     }
 
     function setSubnodeOwner(
@@ -47,8 +23,19 @@ contract ENSRegistry is ENS {
         address _owner
     ) external override {
         bytes32 subNode = keccak256(abi.encodePacked(node, label));
-        records[subNode].owner = _owner;
+        _setOwner(subNode, _owner);
         emit NewOwner(node, label, _owner);
+    }
+
+    function setSubnodeRecord(
+        bytes32 node,
+        bytes32 label,
+        address _owner,
+        address _resolver
+    ) external override onlyOwner(node) {
+        bytes32 subNode = keccak256(abi.encodePacked(node, label));
+        records[subNode] = Record(_owner, _resolver);
+        emit NewOwner(subNode, label, _owner);
     }
 
     function setOwner(bytes32 node, address _owner)
@@ -56,7 +43,7 @@ contract ENSRegistry is ENS {
         override
         onlyOwner(node)
     {
-        records[node].owner = _owner;
+        _setOwner(node, _owner);
         emit Transfer(node, _owner);
     }
 
@@ -69,24 +56,9 @@ contract ENSRegistry is ENS {
         emit NewResolver(node, _resolver);
     }
 
-    function setTTL(bytes32 node, uint64 _ttl)
-        external
-        override
-        onlyOwner(node)
-    {
-        records[node].ttl = _ttl;
-        emit NewTTL(node, _ttl);
+    function _setOwner(bytes32 node, address _owner) internal virtual {
+        records[node].owner = _owner;
     }
-
-    /*     function setApprovalForAll(address operator, bool approved) external {}
-
-    function isApprovedForAll(address owner, address operator)
-        external
-        view
-        returns (bool)
-    {
-        return true;
-    } */
 
     function recordExists(bytes32 node) external view override returns (bool) {
         return records[node].owner == address(0) ? false : true;
@@ -100,17 +72,13 @@ contract ENSRegistry is ENS {
         return records[node].resolver;
     }
 
-    function ttl(bytes32 node) external view override returns (uint64) {
-        return records[node].ttl;
-    }
-
     modifier onlyOwner(bytes32 node) {
-        require(records[node].owner == msg.sender, "Not the owner");
-        _;
-    }
+        require(
+            records[node].owner == msg.sender ||
+                records[0x0].owner == msg.sender,
+            "Not the owner"
+        );
 
-    modifier onlyRegistrar() {
-        require(admin == msg.sender, "Only admin can create new record");
         _;
     }
 }

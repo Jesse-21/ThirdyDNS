@@ -7,6 +7,7 @@ import "./ENS.sol";
 
 contract Resolver is IResolver {
     mapping(bytes32 => address) addresses;
+    mapping(bytes32 => string) names;
 
     ENS ens;
 
@@ -27,15 +28,15 @@ contract Resolver is IResolver {
         emit AddrChanged(node, _addr);
     }
 
-    function supportsInterface(bytes4 interfaceID)
-        external
-        pure
-        override
-        returns (bool)
-    {
-        // 0x3b3b57de interface ID of addr
-        // 0x01ffc9a7 interface ID of supportsInterface itself
-        return interfaceID == 0x3b3b57de || interfaceID == 0x01ffc9a7;
+    //Sets the name associated with an ENS node, for reverse records.
+    function setName(bytes32 node, string calldata newName) external virtual {
+        names[node] = newName;
+        emit NameChanged(node, newName);
+    }
+
+    //Returns the name associated with an ENS node, for reverse records.
+    function name(bytes32 node) external view virtual returns (string memory) {
+        return names[node];
     }
 
     modifier onlyOwner(bytes32 node) {
