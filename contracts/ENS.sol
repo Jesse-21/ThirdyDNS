@@ -2,30 +2,19 @@
 pragma solidity ^0.8.0;
 
 interface ENS {
-    event Transfer(bytes32 indexed node, address owner);
-    event NewResolver(bytes32 indexed node, address resolver);
-    event NewOwner(bytes32 indexed node, bytes32 indexed label, address _owner);
+  event DomainRegistered(bytes32 indexed node, address owner);
 
-    function owner(bytes32 node) external view returns (address);
+  function register(
+    bytes32 node,
+    bytes32 label,
+    address owner
+  ) external;
 
-    function resolver(bytes32 node) external view returns (address);
+  function getAddress(bytes32 node) external view returns (address);
 
-    function setOwner(bytes32 node, address _owner) external;
+  function getName(address addr) external view returns (bytes32);
 
-    function setResolver(bytes32 node, address _resolver) external;
+  function getRegisteredCount() external view returns (uint256);
 
-    function setSubnodeRecord(
-        bytes32 node,
-        bytes32 label,
-        address _owner,
-        address _resolver
-    ) external;
-
-    function setSubnodeOwner(
-        bytes32 node,
-        bytes32 label,
-        address _owner
-    ) external;
-
-    function recordExists(bytes32 node) external view returns (bool);
+  function recordExists(bytes32 node) external view returns (bool);
 }
