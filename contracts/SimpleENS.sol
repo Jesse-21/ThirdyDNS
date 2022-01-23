@@ -1,59 +1,79 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./ENS.sol";
+import "hardhat/console.sol";
 
-contract SimpleENS is ENS {
-  using Counters for Counters.Counter;
-  Counters.Counter private _registeredCount;
+contract SimpleENS {
+    event DomainRegistered(bytes32 indexed label, address owner);
 
-  //Node to owner address
-  mapping(bytes32 => address) records;
+    using Counters for Counters.Counter;
+    Counters.Counter private _registeredCount;
 
-  //Owner address to Node
-  mapping(address => bytes32) nodes;
+    bytes32 rootNode;
 
-  mapping(bytes32 => uint256) public expiryTimes;
+    uint256 constant DEFAULT_EXPIRE_TIME = 4 weeks;
+    mapping(bytes32 => uint256) public expiryTimes;
 
-  uint256 constant DEFAULT_EXPIRE_TIME = 4 weeks;
-  bytes32 rootNode;
+    //Node to owner address
+    mapping(bytes32 => address) private records;
 
-  constructor(bytes32 _rootNode) {
-    rootNode = _rootNode;
-    records[rootNode] = msg.sender;
-  }
+    //Owner address to ens node
+    mapping(address => bytes32) private nodes;
 
-  function register(
-    bytes32 node,
-    bytes32 label,
-    address owner
-  ) external onlyOwner(node) {
-    require(expiryTimes[label] < block.timestamp, "Name is already taken");
-    bytes32 subNode = keccak256(abi.encodePacked(node, label));
-    records[subNode] = owner;
-    nodes[owner] = subNode;
-    expiryTimes[label] = block.timestamp + DEFAULT_EXPIRE_TIME;
-    _registeredCount.increment();
-  }
+    constructor(bytes32 _rootNode) {
+        rootNode = _rootNode;
+        records[_rootNode] = msg.sender;
+    }
 
-  function getAddress(bytes32 node) external view returns (address) {
-    return records[node];
-  }
+    function register(bytes32 label, address owner) external {
+        require(expiryTimes[label] < block.timestamp, "Name is already taken");
+        expiryTimes[label] = block.timestamp + DEFAULT_EXPIRE_TIME;
+        _createSubnode(rootNode, label, owner);
+    }
 
-  function getName(address addr) external view returns (bytes32) {
-    return nodes[addr];
-  }
+    function createSubnode(
+        bytes32 _node,
+        bytes32 label,
+        address owner
+    ) external onlyOwner(_node) {
+        _createSubnode(_node, label, owner);
+    }
 
-  function getRegisteredCount() external view returns (uint256) {
-    return _registeredCount.current();
-  }
+    function _createSubnode(
+        bytes32 _node,
+        bytes32 label,
+        address owner
+    ) internal {
+        bytes32 subNode = keccak256(abi.encodePacked(_node, label));
+        records[subNode] = owner;
+        nodes[owner] = subNode;
 
-  function recordExists(bytes32 node) external view returns (bool) {
-    return records[node] != address(0);
-  }
+        _registeredCount.increment();
+        emit DomainRegistered(label, owner);
+    }
 
-  modifier onlyOwner(bytes32 node) {
-    require(records[node] == msg.sender || records[rootNode] == msg.sender, "Not the owner");
-    _;
-  }
+    function getAddress(bytes32 _node) external view returns (address) {
+        return records[_node];
+    }
+
+    function node(address addr) external view returns (bytes32) {
+        return nodes[addr];
+    }
+
+    function recordExists(bytes32 _node) external view returns (bool) {
+        return records[_node] != address(0);
+    }
+
+    function totalRegisteredCount() external view returns (uint256) {
+        return _registeredCount.current();
+    }
+
+    modifier onlyOwner(bytes32 _node) {
+        require(
+            records[_node] == msg.sender || records[rootNode] == msg.sender,
+            "Not the owner"
+        );
+        _;
+    }
 }
