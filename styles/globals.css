@@ -12,3 +12,27 @@ body {
   font-style: normal;
   font-display: swap;
 }
+
+.notificationWrapper {
+  @apply relative flex flex-row items-center justify-between px-4 py-6 text-white transition-all duration-500 ease-in-out translate-y-0 bg-gray-900 shadow-2xl w-96 hover:shadow-none transform-gpu hover:translate-y-1 rounded-xl;
+}
+
+.iconWrapper {
+  @apply text-xl;
+}
+
+.contentWrapper {
+  @apply flex flex-col items-start justify-center ml-4 cursor-default;
+}
+
+.contentWrapper h1 {
+  @apply text-base font-semibold leading-none tracking-wider text-gray-200;
+}
+
+.contentWrapper p {
+  @apply mt-2 text-sm leading-relaxed tracking-wider text-gray-400;
+}
+
+.closeIcon {
+  @apply absolute text-lg cursor-pointer top-2 right-2;
+}

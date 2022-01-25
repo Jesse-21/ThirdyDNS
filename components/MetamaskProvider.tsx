@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 export type AppContextProps = {
   connectedAccount: string | undefined;
   getBalance: Function;
-  getProvider: Function;
+  ethereum: any;
 };
 
 export const MetamaskContext = createContext<AppContextProps>({} as AppContextProps);
@@ -25,13 +25,6 @@ export const MetamaskProvider = ({ children }: Props) => {
       return await signer.getBalance();
     }
     return null;
-  };
-
-  const getProvider = async () => {
-    if (!ethereum) {
-      return null;
-    }
-    return new ethers.providers.Web3Provider(ethereum);
   };
 
   const connectWallet = async () => {
@@ -69,8 +62,6 @@ export const MetamaskProvider = ({ children }: Props) => {
   }, []);
 
   return (
-    <MetamaskContext.Provider value={{ getBalance, getProvider, connectedAccount }}>
-      {children}
-    </MetamaskContext.Provider>
+    <MetamaskContext.Provider value={{ getBalance, ethereum, connectedAccount }}>{children}</MetamaskContext.Provider>
   );
 };

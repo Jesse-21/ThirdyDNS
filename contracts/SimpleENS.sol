@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
 contract SimpleENS {
-    event DomainRegistered(bytes32 indexed label, address owner);
+    event DomainRegistered(bytes32 indexed label, address indexed owner);
 
     using Counters for Counters.Counter;
     Counters.Counter private _registeredCount;

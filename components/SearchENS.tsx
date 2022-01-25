@@ -1,6 +1,8 @@
 import React, { FormEvent, useContext, useEffect, useState } from "react";
-import { getENS, getRegistrar, getResolver } from "../service/ensService";
-import { labelHash, nameHash } from "../utils";
+import { getENS } from "../service/ensService";
+import addressesEqual, { getEnsContract, labelHash, nameHash } from "../utils";
+import toast from "react-hot-toast";
+import { Notification } from "./Notification";
 import { MetamaskContext } from "./MetamaskProvider";
 
 interface Props {}
@@ -9,7 +11,9 @@ const ROOT_NODE = ".awesome";
 export const SearchENS = (props: Props) => {
   const [name, setName] = useState("");
 
-  const { connectedAccount, getBalance, getProvider } = useContext(MetamaskContext);
+  const { connectedAccount, getBalance, ethereum } = useContext(MetamaskContext);
+
+  const ensContract = getEnsContract(ethereum);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,36 +25,33 @@ export const SearchENS = (props: Props) => {
     } else {
       alert("Empty name");
     }
-
-    alert(`Clean name ${cleanName}`);
-
-    const provider = await getProvider();
-    if (connectedAccount && provider) {
-      const signer = await provider.getSigner();
-      const registrar = getRegistrar(signer);
-      const resolver = getResolver(signer);
-      const ens = getENS(signer);
-
-      const exists = await ens.recordExists(nameHash(`${name}.awesome`));
+    if (connectedAccount && ensContract) {
+      const exists = await ensContract.recordExists(nameHash(`${name}.awesome`));
       if (exists) {
         alert("This name already taken");
         return;
       }
 
-      let tx = await registrar.register(labelHash(name), connectedAccount);
-      await tx.wait();
-
-      let tx2 = await ens.setResolver(nameHash(`${name}.awesome`), resolver.address);
-      await tx2.wait();
-
-      //TODO setAddr with resolver to resolve domain to actual wallet address
-
-      console.log("New owner ", await ens.owner(nameHash(`${name}.awesome`)));
-      console.log("Resolver ", await ens.resolver(nameHash(`${name}.awesome`)));
+      const tx = await ensContract.register(labelHash(name), connectedAccount);
+      toast.success(`Transaction submitted ${tx.hash}`);
     } else {
       alert("Connect wallet");
     }
   }
+
+  const addEventHandlers = () => {
+    if (ensContract && connectedAccount) {
+      ensContract.on("DomainRegistered", (labelBytes, owner) => {
+        if (connectedAccount && addressesEqual(owner, connectedAccount)) {
+          toast("You now own the .awesome domain!");
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    addEventHandlers();
+  }, []);
 
   return (
     <div className="mt-6 bg-transparent rounded-md lg:w-1/3 ring-0 shadow-[#6441A5] shadow-homogen">
