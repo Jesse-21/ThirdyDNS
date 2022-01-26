@@ -18,47 +18,66 @@ contract SimpleENS {
     //Node to owner address
     mapping(bytes32 => address) private records;
 
-    //Owner address to ens node
-    mapping(address => bytes32) private nodes;
+    mapping(bytes32 => string) private names;
+
+    //Owner address to ens nodes
+    mapping(address => bytes32[]) private userNodes;
 
     constructor(bytes32 _rootNode) {
         rootNode = _rootNode;
         records[_rootNode] = msg.sender;
     }
 
-    function register(bytes32 label, address owner) external {
-        require(expiryTimes[label] < block.timestamp, "Name is already taken");
-        expiryTimes[label] = block.timestamp + DEFAULT_EXPIRE_TIME;
-        _createSubnode(rootNode, label, owner);
+    function register(string calldata label, address owner) external {
+        bytes32 hashedLabel = keccak256(abi.encodePacked(label));
+        require(
+            expiryTimes[hashedLabel] < block.timestamp,
+            "Name is already taken"
+        );
+        expiryTimes[hashedLabel] = block.timestamp + DEFAULT_EXPIRE_TIME;
+        bytes32 subNode = _createSubnode(rootNode, hashedLabel, owner);
+        names[subNode] = label;
     }
 
     function createSubnode(
         bytes32 _node,
-        bytes32 label,
+        string calldata label,
         address owner
     ) external onlyOwner(_node) {
-        _createSubnode(_node, label, owner);
+        bytes32 hashedLabel = keccak256(abi.encodePacked(label));
+        bytes32 subNode = _createSubnode(_node, hashedLabel, owner);
+        names[subNode] = string(abi.encodePacked(label, ".", names[_node]));
     }
 
     function _createSubnode(
         bytes32 _node,
-        bytes32 label,
+        bytes32 labelHash,
         address owner
-    ) internal {
-        bytes32 subNode = keccak256(abi.encodePacked(_node, label));
+    ) internal returns (bytes32) {
+        bytes32 subNode = keccak256(abi.encodePacked(_node, labelHash));
         records[subNode] = owner;
-        nodes[owner] = subNode;
-
+        userNodes[owner].push(subNode);
         _registeredCount.increment();
-        emit DomainRegistered(label, owner);
+        emit DomainRegistered(labelHash, owner);
+        console.log("DomainRegistered");
+        return subNode;
     }
 
     function getAddress(bytes32 _node) external view returns (address) {
         return records[_node];
     }
 
-    function node(address addr) external view returns (bytes32) {
-        return nodes[addr];
+    function nodes(address addr) external view returns (bytes32[] memory) {
+        return userNodes[addr];
+    }
+
+    function getNames(address addr) external view returns (string[] memory) {
+        uint256 totalNodes = userNodes[addr].length;
+        string[] memory userDomains = new string[](totalNodes);
+        for (uint256 i = 0; i < totalNodes; i++) {
+            userDomains[i] = names[userNodes[addr][i]];
+        }
+        return userDomains;
     }
 
     function recordExists(bytes32 _node) external view returns (bool) {

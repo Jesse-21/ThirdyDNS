@@ -26,15 +26,15 @@ describe("ENS", function () {
 
   it("can register a new name", async function () {
     const newName = "sercan";
-    const hashedNewName = labelhash(newName);
     const registeredNode = namehash.hash(`${newName}.awesome`);
 
     //Register sercan.awesome
-    let tx = await ens.connect(account1).register(hashedNewName, account1.address);
+    let tx = await ens.connect(account1).register(newName, account1.address);
     await tx.wait();
 
     expect(await ens.getAddress(registeredNode)).equal(account1.address);
-    expect(await ens.node(account1.address)).equal(registeredNode);
+    const names = await ens.getNames(account1.address);
+    expect(names[0]).equal(newName);
   });
 
   it("can add subdomain", async function () {
@@ -42,11 +42,11 @@ describe("ENS", function () {
     const hashedNewName = labelhash(newName);
     const node = namehash.hash(`${newName}.awesome`);
 
-    const subDomain = labelhash("yektas");
+    const subDomain = "yektas";
     const expectedHash = namehash.hash("yektas.sercan.awesome");
 
     //Create sercan.awesome
-    let tx = await ens.connect(account1).register(hashedNewName, account1.address);
+    let tx = await ens.connect(account1).register(newName, account1.address);
     await tx.wait();
 
     //Create yektas.sercan.awesome
@@ -54,7 +54,7 @@ describe("ENS", function () {
     await tx.wait();
 
     expect(await ens.getAddress(expectedHash)).equal(account1.address);
-    expect(await ens.node(account1.address)).equal(expectedHash);
+    expect(await ens.getNames(account1.address)).to.eql(["sercan", "yektas.sercan"]);
     expect(await ens.recordExists(expectedHash)).equal(true);
     expect(await ens.recordExists(namehash.hash("wrong.awesome"))).equal(false);
     expect((await ens.totalRegisteredCount()).toNumber()).equal(2);
@@ -82,7 +82,7 @@ describe("ENS", function () {
     let tx = await ens.connect(account1).register(hashedNewName, account1.address);
     await tx.wait();
 
-    await expect(ens.connect(account2).createSubnode(node, hashedNewName, account2.address)).to.be.revertedWith(
+    await expect(ens.connect(account2).createSubnode(node, newName, account2.address)).to.be.revertedWith(
       "Not the owner"
     );
   });
