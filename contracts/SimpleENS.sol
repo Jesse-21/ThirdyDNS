@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
 contract SimpleENS {
-    event DomainRegistered(bytes32 indexed label, address indexed owner);
+    event DomainRegistered(string indexed label, address indexed owner);
 
     using Counters for Counters.Counter;
     Counters.Counter private _registeredCount;
@@ -59,7 +59,6 @@ contract SimpleENS {
         userNodes[owner].push(subNode);
         _registeredCount.increment();
         emit DomainRegistered(labelHash, owner);
-        console.log("DomainRegistered");
         return subNode;
     }
 

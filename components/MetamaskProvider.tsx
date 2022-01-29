@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 export type AppContextProps = {
   connectedAccount: string | undefined;
   getBalance: Function;
+  connectWallet: Function;
   ethereum: any;
 };
 
@@ -27,15 +28,7 @@ export const MetamaskProvider = ({ children }: Props) => {
     return null;
   };
 
-  const connectWallet = async () => {
-    if (!ethereum) return;
-    try {
-      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-      setConnectedAccount(accounts[0]);
-    } catch (error) {
-      console.log("Error ", error);
-    }
-  };
+  const connectWallet = async () => {};
 
   const setEthereumFromWindow = async () => {
     const w = window as unknown as Window & { ethereum: any };
@@ -54,14 +47,25 @@ export const MetamaskProvider = ({ children }: Props) => {
   };
 
   useEffect(() => {
-    connectWallet();
-  }, [ethereum]);
-
-  useEffect(() => {
     setEthereumFromWindow();
   }, []);
 
+  useEffect(() => {
+    async function connectWallet() {
+      if (!ethereum) return;
+      try {
+        const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+        setConnectedAccount(accounts[0]);
+      } catch (error) {
+        console.log("Error ", error);
+      }
+    }
+    connectWallet();
+  }, [ethereum]);
+
   return (
-    <MetamaskContext.Provider value={{ getBalance, ethereum, connectedAccount }}>{children}</MetamaskContext.Provider>
+    <MetamaskContext.Provider value={{ getBalance, ethereum, connectWallet, connectedAccount }}>
+      {children}
+    </MetamaskContext.Provider>
   );
 };

@@ -68,9 +68,7 @@ describe("ENS", function () {
     let tx = await ens.connect(account1).register(hashedNewName, account1.address);
     await tx.wait();
 
-    await expect(ens.connect(account1).register(hashedNewName, account1.address)).to.be.revertedWith(
-      "Name is already taken"
-    );
+    expect(ens.connect(account1).register(hashedNewName, account1.address)).to.be.revertedWith("Name is already taken");
   });
 
   it("non-owner cannot register subnode ", async function () {
@@ -82,8 +80,7 @@ describe("ENS", function () {
     let tx = await ens.connect(account1).register(hashedNewName, account1.address);
     await tx.wait();
 
-    await expect(ens.connect(account2).createSubnode(node, newName, account2.address)).to.be.revertedWith(
-      "Not the owner"
-    );
+    expect(ens.connect(account2).createSubnode(node, newName, account2.address)).to.be.revertedWith("Not the owner");
+    expect(ens.connect(account2).createSubnode(node, "haha", account2.address)).to.emit(ens, "DomainRegistered");
   });
 });

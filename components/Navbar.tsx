@@ -4,6 +4,7 @@ import { XIcon } from "@heroicons/react/outline";
 import addressesEqual, { getEnsContract } from "../utils";
 import { MetamaskContext } from "./MetamaskProvider";
 import toast from "react-hot-toast";
+import { ethers } from "ethers";
 type Props = {};
 
 const Navbar = (props: Props) => {
@@ -12,33 +13,31 @@ const Navbar = (props: Props) => {
   const [domains, setDomains] = useState([]);
   const { connectedAccount, getBalance, ethereum } = useContext(MetamaskContext);
 
-  const ensContract = getEnsContract(ethereum);
+  useEffect(() => {
+    getUserDomains();
+  }, [open, ethereum, connectedAccount]);
 
   const getUserDomains = async () => {
+    const ensContract = getEnsContract(ethereum);
     if (ensContract && connectedAccount) {
       setDomains(await ensContract.getNames(connectedAccount));
     }
   };
 
   useEffect(() => {
-    getUserDomains();
-  }, [open, ethereum, connectedAccount]);
-
-  const addEventHandlers = () => {
-    if (ensContract && connectedAccount) {
-      ensContract.on("DomainRegistered", (labelBytes, owner) => {
-        console.log("registiring");
-        if (connectedAccount && addressesEqual(owner, connectedAccount)) {
-          toast("You now own the .awesome domain!");
-          getUserDomains();
-        }
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (!ethereum || !connectedAccount || !ensContract) addEventHandlers();
-  }, [ethereum, connectedAccount, ensContract]);
+    const subscribeToEvents = async () => {
+      const ensContract = getEnsContract(ethereum);
+      if (ensContract) {
+        ensContract.on("DomainRegistered", async (label, owner) => {
+          if (connectedAccount && addressesEqual(owner, connectedAccount)) {
+            toast.success(`You now own the ${label}.awesome domain!`);
+            getUserDomains();
+          }
+        });
+      }
+    };
+    subscribeToEvents();
+  }, [ethereum]);
 
   return (
     <header>
@@ -62,9 +61,12 @@ const Navbar = (props: Props) => {
         </div>
 
         <div className="flex items-center justify-end flex-1">
-          <nav className="hidden lg:uppercase lg:text-white lg:tracking-wide lg:font-bold lg:text-lg lg:space-x-4 lg:flex">
+          <nav className="hidden lg:uppercase lg:items-center lg:text-white lg:tracking-wide lg:font-bold lg:text-lg lg:space-x-4 lg:flex">
+            <button className="block h-10 px-4 bg-white rounded-lg text-primary" onClick={() => setOpen(true)}>
+              Connect
+            </button>
             <button
-              className="block h-16 leading-[4rem] border-b-4 border-transparent hover:text-secondary hover:border-current"
+              className="block h-16 border-b-4 border-transparent hover:text-secondary hover:border-current"
               onClick={() => setOpen(true)}
             >
               My Domains ({domains && domains.length})

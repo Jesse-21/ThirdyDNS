@@ -11,12 +11,15 @@ const ROOT_NODE = ".awesome";
 export const SearchENS = (props: Props) => {
   const [name, setName] = useState("");
 
-  const { connectedAccount, getBalance, ethereum } = useContext(MetamaskContext);
+  const { connectWallet, connectedAccount, getBalance, ethereum } = useContext(MetamaskContext);
 
   const ensContract = getEnsContract(ethereum);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    connectWallet();
+
     let cleanName = name;
     if (name) {
       if (!name.endsWith(ROOT_NODE)) {
