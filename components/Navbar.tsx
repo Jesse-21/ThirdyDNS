@@ -4,7 +4,7 @@ import { XIcon } from "@heroicons/react/outline";
 import addressesEqual, { getEnsContract } from "../utils";
 import { MetamaskContext } from "./MetamaskProvider";
 import toast from "react-hot-toast";
-import { ethers } from "ethers";
+
 type Props = {};
 
 const Navbar = (props: Props) => {
@@ -62,15 +62,18 @@ const Navbar = (props: Props) => {
 
         <div className="flex items-center justify-end flex-1">
           <nav className="hidden lg:uppercase lg:items-center lg:text-white lg:tracking-wide lg:font-bold lg:text-lg lg:space-x-4 lg:flex">
-            <button className="block h-10 px-4 bg-white rounded-lg text-primary" onClick={() => setOpen(true)}>
-              Connect
-            </button>
-            <button
-              className="block h-16 border-b-4 border-transparent hover:text-secondary hover:border-current"
-              onClick={() => setOpen(true)}
-            >
-              My Domains ({domains && domains.length})
-            </button>
+            {connectedAccount ? (
+              <button
+                className="block h-16 border-b-4 border-transparent hover:text-secondary hover:border-current"
+                onClick={() => setOpen(true)}
+              >
+                My Domains ({domains && domains.length})
+              </button>
+            ) : (
+              <button className="block h-10 px-4 bg-white rounded-lg text-primary" onClick={() => setOpen(true)}>
+                Connect
+              </button>
+            )}
           </nav>
         </div>
         <Transition.Root show={open} as={Fragment}>

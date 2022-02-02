@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, FC } from "react";
+import { useEffect, useState, createContext } from "react";
 import { ethers } from "ethers";
 
 export type AppContextProps = {
@@ -28,7 +28,9 @@ export const MetamaskProvider = ({ children }: Props) => {
     return null;
   };
 
-  const connectWallet = async () => {};
+  const connectWallet = async () => {
+    
+  };
 
   const setEthereumFromWindow = async () => {
     const w = window as unknown as Window & { ethereum: any };
