@@ -1,5 +1,6 @@
 import { useEffect, useState, createContext } from "react";
 import { ethers } from "ethers";
+import toast from "react-hot-toast";
 
 export type AppContextProps = {
   connectedAccount: string | undefined;
@@ -50,7 +51,7 @@ export const MetamaskProvider = ({ children }: Props) => {
       if (chainId === rinkebyId || chainId === localNetworkId) {
         setEthereum(w.ethereum);
       } else {
-        alert("Please use Rinkeby network");
+        toast.error("Please connect to the Rinkeby");
       }
     }
   };
