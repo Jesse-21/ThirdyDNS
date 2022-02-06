@@ -43,9 +43,9 @@ export const SearchENS = (props: Props) => {
   }
 
   return (
-    <div className="mt-6 bg-transparent rounded-xl lg:w-1/3 ring-0 shadow-[#6441A5] shadow-homogen">
+    <div className="mt-6 bg-transparent rounded-xl w-full lg:w-1/2 ring-0 shadow-[#6441A5] shadow-homogen">
       <form onSubmit={onSubmit} className="flex flex-wrap justify-between md:flex-row">
-        <div className="relative w-full">
+        <div className="relative w-full mx-10 lg:mx-0">
           <label htmlFor="domainName" className="sr-only">
             Domain Name
           </label>
@@ -57,7 +57,7 @@ export const SearchENS = (props: Props) => {
             value={name}
             onChange={(e) => setName(e.target.value.trim())}
             placeholder="Search your next ENS. (Ex: sercan.awesome)"
-            className="block w-full h-20 pl-4 pr-16 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-secondary rounded-xl sm:text-xl"
+            className="block w-full h-20 pl-4 pr-16 text-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-secondary rounded-xl sm:text-xl"
           />
 
           <button

@@ -41,11 +41,11 @@ const Navbar = (props: Props) => {
 
   return (
     <header>
-      <div className="flex items-center justify-between h-16 mx-auto max-w-screen-2xl sm:px-6 lg:px-8">
-        <div className="flex items-center">
-          <button type="button" className="p-2 sm:mr-4 lg:hidden">
+      <div className="flex items-center justify-between h-16 p-10 mx-auto sm:p-12 max-w-screen-2xl lg:px-8">
+        <div className="flex items-center justify-between w-full">
+          <button type="button" onClick={() => setOpen(true)} className="order-last p-2 text-white sm:mr-4 lg:hidden">
             <svg
-              className="w-6 h-6"
+              className="w-8 h-8"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -55,16 +55,16 @@ const Navbar = (props: Props) => {
             </svg>
           </button>
 
-          <a href="" className="flex">
-            <span className="inline-block w-32 h-10 bg-gray-200 rounded-lg">.A</span>
+          <a href="" className="flex w-32 rounded-lg">
+            <img src="/ANS.png" className="object-fit" />
           </a>
         </div>
 
         <div className="flex items-center justify-end flex-1">
-          <nav className="hidden lg:uppercase lg:items-center lg:text-white lg:tracking-wide lg:font-bold lg:text-lg lg:space-x-4 lg:flex">
+          <nav className="hidden lg:uppercase lg:items-center lg:text-white lg:tracking-wide lg:font-bold lg:text-xl lg:space-x-4 lg:flex">
             {connectedAccount ? (
               <button
-                className="block h-16 border-b-4 border-transparent hover:text-secondary hover:border-current"
+                className="block h-16 border-b-4 border-transparent w-36 hover:text-secondary hover:border-current"
                 onClick={() => setOpen(true)}
               >
                 My Domains ({domains && domains.length})
@@ -101,7 +101,7 @@ const Navbar = (props: Props) => {
                   leaveTo="translate-x-full"
                 >
                   <div className="relative w-screen max-w-md">
-                    <Transition.Child
+                    {/*  <Transition.Child
                       as={Fragment}
                       enter="ease-in-out duration-200"
                       enterFrom="opacity-0"
@@ -110,20 +110,21 @@ const Navbar = (props: Props) => {
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0"
                     >
-                      <div className="absolute top-0 left-0 flex pt-4 pr-2 -ml-8 sm:-ml-10 sm:pr-4">
-                        <button
-                          type="button"
-                          className="text-gray-300 rounded-md hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                          onClick={() => setOpen(false)}
-                        >
-                          <span className="sr-only">Close panel</span>
-                          <XIcon className="w-6 h-6" aria-hidden="true" />
-                        </button>
-                      </div>
-                    </Transition.Child>
+                      
+                    </Transition.Child> */}
                     <div className="flex flex-col h-full py-6 overflow-y-scroll bg-white shadow-xl">
-                      <div className="px-4 sm:px-6">
-                        <Dialog.Title className="text-3xl font-semibold text-gray-700 uppercase">
+                      <div className="flex items-center px-4 space-x-4 sm:px-6">
+                        <div className="inline-flex p-2 -ml-2 ">
+                          <button
+                            type="button"
+                            className="rounded-md focus:outline-none hover:text-primary focus:ring-2 focus:ring-white"
+                            onClick={() => setOpen(false)}
+                          >
+                            <span className="sr-only">Close panel</span>
+                            <XIcon className="w-8 h-8" aria-hidden="true" />
+                          </button>
+                        </div>
+                        <Dialog.Title className="inline-block text-3xl font-semibold text-gray-700 uppercase">
                           My Domains ({domains && domains.length})
                         </Dialog.Title>
                       </div>

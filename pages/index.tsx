@@ -10,7 +10,8 @@ import { getEnsContract } from "../utils";
 const Home: NextPage = () => {
   return (
     <>
-      <img src="/bg.png" className="absolute w-full h-full -z-20" />
+      {/*  <img src="/bg.png" className="absolute w-full h-full -z-20" /> */}
+      <div className="absolute w-full h-full -z-20 bg-gradient-to-r from-sky-500 to-[#34139E]"></div>
       <Navbar />
       <div className="flex flex-col items-center justify-start h-full pt-48 space-y-10 overflow-hidden text-white ">
         <h1 className="text-6xl text-center">

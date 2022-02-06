@@ -58,7 +58,7 @@ contract SimpleENS {
         records[subNode] = owner;
         userNodes[owner].push(subNode);
         _registeredCount.increment();
-        emit DomainRegistered(labelHash, owner);
+        emit DomainRegistered(names[subNode], owner);
         return subNode;
     }
 
