@@ -29,7 +29,14 @@ export const MetamaskProvider = ({ children }: Props) => {
   };
 
   const connectWallet = async () => {
-    
+    if (!ethereum) return;
+    try {
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      setConnectedAccount(accounts[0]);
+      return accounts[0];
+    } catch (error) {
+      console.log("Error ", error);
+    }
   };
 
   const setEthereumFromWindow = async () => {
@@ -52,7 +59,7 @@ export const MetamaskProvider = ({ children }: Props) => {
     setEthereumFromWindow();
   }, []);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     async function connectWallet() {
       if (!ethereum) return;
       try {
@@ -63,7 +70,7 @@ export const MetamaskProvider = ({ children }: Props) => {
       }
     }
     connectWallet();
-  }, [ethereum]);
+  }, [ethereum]); */
 
   return (
     <MetamaskContext.Provider value={{ getBalance, ethereum, connectWallet, connectedAccount }}>

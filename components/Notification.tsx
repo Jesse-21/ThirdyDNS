@@ -1,14 +1,14 @@
 import React from "react";
-import classNames from "classnames";
 
-import toast, { Toast } from "react-hot-toast";
+import { Toast } from "react-hot-toast";
+import { DocumentSearchIcon } from "@heroicons/react/outline";
 type Props = {
   t: Toast;
   txHash: string;
 };
 export const Notification = ({ t, txHash }: Props) => {
   return (
-    <div role="alert" className="flex p-4 text-green-600 bg-white border border-b-4 border-current rounded-lg">
+    <div role="alert" className="flex p-4 text-xl text-green-600 bg-white border border-b-4 border-current rounded-lg">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="flex-shrink-0 w-6 h-6">
         <path
           fillRule="evenodd"
@@ -20,7 +20,15 @@ export const Notification = ({ t, txHash }: Props) => {
       <div className="ml-3">
         <p className="font-bold">Registration in progress...</p>
 
-        <p className="mt-1 text-sm text-black">{txHash}</p>
+        <a
+          href={`https://rinkeby.etherscan.io/tx/${txHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center mt-3 text-sm text-blue-600 underline "
+        >
+          <DocumentSearchIcon className="inline-block w-6 h-6" />
+          {txHash}
+        </a>
       </div>
     </div>
   );

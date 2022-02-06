@@ -11,39 +11,44 @@ const ROOT_NODE = ".awesome";
 export const SearchENS = (props: Props) => {
   const [name, setName] = useState("");
 
-  const { connectWallet, connectedAccount, getBalance, ethereum } = useContext(MetamaskContext);
+  const { connectWallet, ethereum } = useContext(MetamaskContext);
 
   const ensContract = getEnsContract(ethereum);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    connectWallet();
-
     let cleanName = name;
+
+    if (!name) return;
+
     if (name) {
-      if (!name.endsWith(ROOT_NODE)) {
-        cleanName + ROOT_NODE;
+      if (name.endsWith(ROOT_NODE)) {
+        cleanName = name.substring(0, name.length - ROOT_NODE.length);
       }
-    } else {
-      alert("Empty name");
     }
-    if (connectedAccount && ensContract) {
-      const exists = await ensContract.recordExists(nameHash(`${name}.awesome`));
+
+    let account = await connectWallet();
+    if (account && ensContract) {
+      const exists = await ensContract.recordExists(nameHash(`${cleanName}`));
       if (exists) {
-        alert("This name already taken");
+        toast.error("Domain already exists");
         return;
       }
 
-      const tx = await ensContract.register(name, connectedAccount);
-      toast.custom((t) => <Notification t={t} txHash={tx.hash} />);
+      try {
+        const tx = await ensContract.register(cleanName, account);
+        toast.custom((t) => <Notification t={t} txHash={tx.hash} />);
+      } catch (e) {
+        toast.error("Maximum domain limit reached");
+      }
     } else {
-      alert("Connect wallet");
+      toast.error("Connect your wallet to register a domain");
     }
   }
 
   return (
-    <div className="mt-6 bg-transparent rounded-xl w-full lg:w-1/2 ring-0 shadow-[#6441A5] shadow-homogen">
+    <div className="w-full mt-6 bg-transparent shadow-lg rounded-xl lg:w-1/2 ring-0">
       <form onSubmit={onSubmit} className="flex flex-wrap justify-between md:flex-row">
         <div className="relative w-full mx-10 lg:mx-0">
           <label htmlFor="domainName" className="sr-only">
@@ -56,13 +61,13 @@ export const SearchENS = (props: Props) => {
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value.trim())}
-            placeholder="Search your next ENS. (Ex: sercan.awesome)"
-            className="block w-full h-20 pl-4 pr-16 text-lg text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-secondary rounded-xl sm:text-xl"
+            placeholder="Search your next domain"
+            className="block w-full h-20 pl-4 pr-16 text-lg text-gray-700 placeholder-gray-400 border-0 focus:ring-2 focus:ring-pink-500 rounded-xl sm:text-xl"
           />
 
           <button
             type="submit"
-            className="absolute p-2 text-primary transform -translate-y-1/2 bg-secondary rounded-full shadow-[#af9de4] shadow-md hover:bg-secondary right-4 top-1/2"
+            className="absolute p-4 text-white transform -translate-y-1/2 bg-pink-500 rounded-lg shadow-md right-4 top-1/2"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

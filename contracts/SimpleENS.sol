@@ -13,6 +13,8 @@ contract SimpleENS {
     bytes32 rootNode;
 
     uint256 constant DEFAULT_EXPIRE_TIME = 4 weeks;
+    uint256 constant MAXIMUM_NODES = 5;
+
     mapping(bytes32 => uint256) public expiryTimes;
 
     //Node to owner address
@@ -53,7 +55,7 @@ contract SimpleENS {
         bytes32 _node,
         bytes32 labelHash,
         address owner
-    ) internal returns (bytes32) {
+    ) internal limitNodes(owner) returns (bytes32) {
         bytes32 subNode = keccak256(abi.encodePacked(_node, labelHash));
         records[subNode] = owner;
         userNodes[owner].push(subNode);
@@ -91,6 +93,14 @@ contract SimpleENS {
         require(
             records[_node] == msg.sender || records[rootNode] == msg.sender,
             "Not the owner"
+        );
+        _;
+    }
+
+    modifier limitNodes(address owner) {
+        require(
+            userNodes[owner].length < MAXIMUM_NODES,
+            "Maximum domain limit reached"
         );
         _;
     }

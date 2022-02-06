@@ -11,7 +11,7 @@ const Navbar = (props: Props) => {
   let [open, setOpen] = useState(false);
 
   const [domains, setDomains] = useState([]);
-  const { connectedAccount, getBalance, ethereum } = useContext(MetamaskContext);
+  const { connectedAccount, connectWallet, getBalance, ethereum } = useContext(MetamaskContext);
 
   useEffect(() => {
     getUserDomains();
@@ -29,15 +29,17 @@ const Navbar = (props: Props) => {
       const ensContract = getEnsContract(ethereum);
       if (ensContract) {
         ensContract.on("DomainRegistered", async (label, owner) => {
+          console.log("Domain Registered");
+
           if (connectedAccount && addressesEqual(owner, connectedAccount)) {
-            toast.success(`You now own the ${label}.awesome domain!`);
+            toast.success(`You now own an awesome domain!`);
             getUserDomains();
           }
         });
       }
     };
     subscribeToEvents();
-  }, [ethereum]);
+  }, [ethereum, connectedAccount]);
 
   return (
     <header>
@@ -64,13 +66,13 @@ const Navbar = (props: Props) => {
           <nav className="hidden lg:uppercase lg:items-center lg:text-white lg:tracking-wide lg:font-bold lg:text-xl lg:space-x-4 lg:flex">
             {connectedAccount ? (
               <button
-                className="block h-16 border-b-4 border-transparent w-36 hover:text-secondary hover:border-current"
+                className="block w-40 h-16 border-b-4 border-transparent hover:text-primary hover:border-current"
                 onClick={() => setOpen(true)}
               >
                 My Domains ({domains && domains.length})
               </button>
             ) : (
-              <button className="block h-10 px-4 bg-white rounded-lg text-primary" onClick={() => setOpen(true)}>
+              <button className="block h-12 px-4 text-white bg-pink-500 rounded-lg" onClick={() => connectWallet()}>
                 Connect
               </button>
             )}
@@ -117,14 +119,14 @@ const Navbar = (props: Props) => {
                         <div className="inline-flex p-2 -ml-2 ">
                           <button
                             type="button"
-                            className="rounded-md focus:outline-none hover:text-primary focus:ring-2 focus:ring-white"
+                            className="p-2 rounded-md focus:outline-none hover:bg-primary hover:text-white focus:ring-2 focus:ring-white"
                             onClick={() => setOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="w-8 h-8" aria-hidden="true" />
                           </button>
                         </div>
-                        <Dialog.Title className="inline-block text-3xl font-semibold text-gray-700 uppercase">
+                        <Dialog.Title className="inline-block text-3xl font-semibold uppercase text-primary">
                           My Domains ({domains && domains.length})
                         </Dialog.Title>
                       </div>
@@ -132,7 +134,7 @@ const Navbar = (props: Props) => {
                         <ul className="space-y-4">
                           {domains.map((domain, idx) => (
                             <li key={idx}>
-                              <h1 className="p-4 text-xl font-semibold text-transparent border-2 border-gray-200 rounded-2xl bg-clip-text bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
+                              <h1 className="p-3 text-xl font-semibold text-transparent border-2 border-gray-200 rounded-2xl bg-clip-text bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
                                 {domain}.awesome
                               </h1>
                             </li>

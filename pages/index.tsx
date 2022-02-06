@@ -10,12 +10,12 @@ import { getEnsContract } from "../utils";
 const Home: NextPage = () => {
   return (
     <>
-      {/*  <img src="/bg.png" className="absolute w-full h-full -z-20" /> */}
-      <div className="absolute w-full h-full -z-20 bg-gradient-to-r from-sky-500 to-[#34139E]"></div>
+      <img src="/bg.jpg" className="absolute object-cover w-full h-full bg-transparent filter -z-20" />
+      <div className="absolute w-full h-full opacity-70 -z-20 bg-gradient-to-tl from-sky-600 to-blue-700"></div>
       <Navbar />
-      <div className="flex flex-col items-center justify-start h-full pt-48 space-y-10 overflow-hidden text-white ">
+      <div className="flex flex-col items-center justify-start h-full pt-48 space-y-10 text-white ">
         <h1 className="text-6xl text-center">
-          Your next <span className="text-secondary">.awesome</span> domain is here. <br /> Claim it!
+          Your next <span className="text-pink-500">.awesome</span> domain is here. <br /> Claim it!
         </h1>
         <SearchENS />
       </div>

@@ -7,7 +7,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <MetamaskProvider>
       <Component {...pageProps} />
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          style: {
+            fontSize: "1.2rem",
+          },
+        }}
+      />
     </MetamaskProvider>
   );
 }
