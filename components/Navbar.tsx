@@ -32,7 +32,7 @@ const Navbar = (props: Props) => {
           console.log("Domain Registered");
 
           if (connectedAccount && addressesEqual(owner, connectedAccount)) {
-            toast.success(`You now own an awesome domain!`);
+            toast.success(`You now own a thirdy domain!`);
             getUserDomains();
           }
         });
