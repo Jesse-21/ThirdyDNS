@@ -7,7 +7,7 @@ import { MetamaskContext } from "./MetamaskProvider";
 
 interface Props {}
 
-const ROOT_NODE = ".awesome";
+const ROOT_NODE = ".thirdy";
 export const SearchENS = (props: Props) => {
   const [name, setName] = useState("");
 
