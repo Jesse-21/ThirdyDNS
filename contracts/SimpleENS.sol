@@ -11,7 +11,7 @@ contract SimpleENS {
 
     bytes32 rootNode;
 
-    uint256 constant DEFAULT_EXPIRE_TIME = 4 weeks;
+    uint256 constant DEFAULT_EXPIRE_TIME = 52 weeks;
     uint256 constant MAXIMUM_NODES = 5;
 
     mapping(bytes32 => uint256) public expiryTimes;
