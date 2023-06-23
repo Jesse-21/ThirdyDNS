@@ -7,7 +7,7 @@ const namehash = require("eth-ens-namehash");
 
 const labelhash = (label: string) => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(label));
 
-const rootNode = namehash.hash("awesome");
+const rootNode = namehash.hash("thirdy");
 
 let ens: SimpleENS;
 
@@ -26,7 +26,7 @@ describe("ENS", function () {
 
   it("can register a new name", async function () {
     const newName = "sercan";
-    const registeredNode = namehash.hash(`${newName}.awesome`);
+    const registeredNode = namehash.hash(`${newName}.thirdy`);
 
     //Register sercan.awesome
     let tx = await ens.connect(account1).register(newName, account1.address);
@@ -40,10 +40,10 @@ describe("ENS", function () {
   it("can add subdomain", async function () {
     const newName = "sercan";
     const hashedNewName = labelhash(newName);
-    const node = namehash.hash(`${newName}.awesome`);
+    const node = namehash.hash(`${newName}.thirdy`);
 
-    const subDomain = "yektas";
-    const expectedHash = namehash.hash("yektas.sercan.awesome");
+    const subDomain = "yourname";
+    const expectedHash = namehash.hash("yourname.sercan.thirdy");
 
     //Create sercan.awesome
     let tx = await ens.connect(account1).register(newName, account1.address);
@@ -56,7 +56,7 @@ describe("ENS", function () {
     expect(await ens.getAddress(expectedHash)).equal(account1.address);
     expect(await ens.getNames(account1.address)).to.eql(["sercan", "yektas.sercan"]);
     expect(await ens.recordExists(expectedHash)).equal(true);
-    expect(await ens.recordExists(namehash.hash("wrong.awesome"))).equal(false);
+    expect(await ens.recordExists(namehash.hash("wrong.thirdy"))).equal(false);
     expect((await ens.totalRegisteredCount()).toNumber()).equal(2);
   });
 
@@ -64,7 +64,7 @@ describe("ENS", function () {
     const newName = "sercan";
     const hashedNewName = labelhash(newName);
 
-    //Register sercan.awesome
+    //Register sercan.thirdy
     let tx = await ens.connect(account1).register(hashedNewName, account1.address);
     await tx.wait();
 
@@ -74,7 +74,7 @@ describe("ENS", function () {
   it("non-owner cannot register subnode ", async function () {
     const newName = "sercan";
     const hashedNewName = labelhash(newName);
-    const node = namehash.hash(`${newName}.awesome`);
+    const node = namehash.hash(`${newName}.thirdy`);
 
     //Register sercan.awesome
     let tx = await ens.connect(account1).register(hashedNewName, account1.address);
