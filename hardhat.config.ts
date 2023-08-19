@@ -34,11 +34,11 @@ module.exports = {
   },
   networks: {
     ropsten: {
-      url: process.env.NEXT_PUBLIC_ROPSTEN_URL || "",
+      url: process.env.NEXT_PUBLIC_GOERLI_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     rinkeby: {
-      url: process.env.NEXT_PUBLIC_RINKEBY_URL || "",
+      url: process.env.NEXT_PUBLIC_GOERLI_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
   },
