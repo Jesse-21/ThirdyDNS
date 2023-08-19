@@ -33,12 +33,12 @@ module.exports = {
     account2: 2,
   },
   networks: {
-    ropsten: {
+    goerli: {
       url: process.env.NEXT_PUBLIC_GOERLI_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    rinkeby: {
-      url: process.env.NEXT_PUBLIC_GOERLI_URL || "",
+    ethereum: {
+      url: process.env.NEXT_PUBLIC_ETHEREUM_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
   },
