@@ -1,1 +1,1 @@
-export const ensAddress = "0xef572b7941F481288deDa612501074C6e9F9368d"; //Rinkeby
+export const ensAddress = "0x13659C83Bce9f3Da516e402534F7BB2Fb6792a7D"; //Goerli
