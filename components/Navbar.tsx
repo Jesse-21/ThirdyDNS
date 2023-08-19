@@ -135,7 +135,7 @@ const Navbar = (props: Props) => {
                           {domains.map((domain, idx) => (
                             <li key={idx}>
                               <h1 className="p-3 text-xl font-semibold text-transparent border-2 border-gray-200 rounded-2xl bg-clip-text bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
-                                {domain}.awesome
+                                {domain}.thirdy
                               </h1>
                             </li>
                           ))}
