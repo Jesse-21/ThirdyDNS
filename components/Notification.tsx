@@ -21,7 +21,7 @@ export const Notification = ({ t, txHash }: Props) => {
         <p className="font-bold">Registration in progress...</p>
 
         <a
-          href={`https://rinkeby.etherscan.io/tx/${txHash}`}
+          href={`https://goerli.etherscan.io/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center mt-3 text-sm text-blue-600 underline "
