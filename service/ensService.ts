@@ -5,7 +5,7 @@ import ens from "../artifacts/contracts/SimpleENS.sol/SimpleENS.json";
 
 export const rpcProvider =
   process.env.NODE_ENV === "production"
-    ? new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_ROPSTEN_URL)
+    ? new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_GOERLI_URL)
     : new ethers.providers.JsonRpcProvider();
 
 export function getENS(signer?: any) {
