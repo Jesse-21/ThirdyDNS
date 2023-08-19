@@ -46,12 +46,12 @@ export const MetamaskProvider = ({ children }: Props) => {
     if (w && w.ethereum) {
       w.ethereum.on("chainChanged", () => w.location.reload());
       const chainId = await w.ethereum.request({ method: "eth_chainId" });
-      const rinkebyId = "0x4";
+      const goerliId = "0x5";
       const localNetworkId = "0x7a69";
-      if (chainId === rinkebyId || chainId === localNetworkId) {
+      if (chainId === goerliId || chainId === localNetworkId) {
         setEthereum(w.ethereum);
       } else {
-        toast.error("Please connect to the Rinkeby");
+        toast.error("Please connect to the Goerli");
       }
     }
   };
