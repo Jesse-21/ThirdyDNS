@@ -25,10 +25,10 @@ describe("ENS", function () {
   });
 
   it("can register a new name", async function () {
-    const newName = "sercan";
+    const newName = "yourname";
     const registeredNode = namehash.hash(`${newName}.thirdy`);
 
-    //Register sercan.awesome
+    //Register yourname.thirdy
     let tx = await ens.connect(account1).register(newName, account1.address);
     await tx.wait();
 
