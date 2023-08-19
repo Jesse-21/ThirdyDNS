@@ -15,7 +15,7 @@ const Home: NextPage = () => {
       <Navbar />
       <div className="flex flex-col items-center justify-start h-full pt-48 space-y-10 text-white ">
         <h1 className="text-6xl text-center">
-          Your next <span className="text-pink-500">.awesome</span> domain is here. <br /> Claim it!
+          Your next <span className="text-pink-500">.thirdy</span> domain is here. <br /> Claim it!
         </h1>
         <SearchENS />
       </div>
